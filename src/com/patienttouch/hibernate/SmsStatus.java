@@ -1,0 +1,5 @@
+package com.patienttouch.hibernate;
+
+public enum SmsStatus {
+	SMS_SUBMISSION_PENDING, SMS_SUBMITED_SUCCESSFULLY, SMS_SUBMISSION_ERROR, SMS_DELIVERED, SMS_NOT_DELIVERED
+}
