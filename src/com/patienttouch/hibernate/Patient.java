@@ -13,7 +13,6 @@ public class Patient {
 	private String firstName;
 	private String lastName;
 	private String phone;
-	private int del;
 
 	@Id
 	@GeneratedValue
@@ -47,13 +46,5 @@ public class Patient {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public int getDel() {
-		return del;
-	}
-
-	public void setDel(int del) {
-		this.del = del;
 	}
 }

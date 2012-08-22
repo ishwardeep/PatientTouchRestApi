@@ -187,6 +187,7 @@ CREATE  TABLE IF NOT EXISTS `Campaign` (
   `rescheduleMessage` TEXT NULL ,
   `scheduleTime` DATETIME NOT NULL ,
   `status` ENUM('SCHEDULED','RUNNING','COMPLETE') NOT NULL ,
+  `lastUpdateTime` DATETIME NOT NULL ,
   PRIMARY KEY (`campaignid`) ,
   CONSTRAINT `fk_campaign_practiceid`
     FOREIGN KEY (`practiceid` )
@@ -208,10 +209,9 @@ DROP TABLE IF EXISTS `Patient` ;
 
 CREATE  TABLE IF NOT EXISTS `Patient` (
   `patientid` INT NOT NULL AUTO_INCREMENT ,
-  `firstName` VARCHAR(45) NOT NULL ,
-  `lastName` VARCHAR(45) NOT NULL ,
-  `phone` VARCHAR(45) NOT NULL ,
-  `del` VARCHAR(45) NULL DEFAULT 0 ,
+  `firstName` VARCHAR(64) NOT NULL ,
+  `lastName` VARCHAR(64) NOT NULL ,
+  `phone` VARCHAR(16) NOT NULL ,
   PRIMARY KEY (`patientid`) ,
   INDEX `phone_idx` (`phone` ASC) ,
   UNIQUE INDEX `patientinfo_idx` (`phone` ASC, `firstName` ASC, `lastName` ASC) )
@@ -231,8 +231,8 @@ CREATE  TABLE IF NOT EXISTS `AppointmentInfo` (
   `patientid` INT NOT NULL ,
   `appointmentDate` DATE NOT NULL ,
   `appointmentTime` VARCHAR(12) NOT NULL ,
-  `updateTime` TIMESTAMP NOT NULL ,
-  `status` ENUM('TRYING','UNABLE_TO_SEND_MESSAGE','MESSAGE_SENT','NOT_DELIVERED','INVALID_PHONE','DELIVERED','ACCEPTED','CANCEL','RESCHEDULE','PROBLEM') NOT NULL ,
+  `lastUpdateTime` TIMESTAMP NOT NULL ,
+  `status` ENUM('TRYING','UNABLE_TO_SEND_MESSAGE','MESSAGE_SENT','NOT_DELIVERED','INVALID_PHONE','DELIVERED','ACCEPTED','CANCEL','RESCHEDULE','PROBLEM','NO_RESPONSE') NOT NULL ,
   PRIMARY KEY (`appointmentinfoid`) ,
   CONSTRAINT `fk_appointmentinfo_campaignid`
     FOREIGN KEY (`campaignid` )
@@ -306,12 +306,26 @@ CREATE  TABLE IF NOT EXISTS `SmsMessage` (
   `vendorStatusMessage` VARCHAR(128) NULL ,
   `messageDeliveryStatus` VARCHAR(128) NULL ,
   `status` ENUM('SMS_SUBMISSION_PENDING','SMS_SUBMITED_SUCCESSFULLY','SMS_SUBMISSION_ERROR','SMS_DELIVERED','SMS_NOT_DELIVERED') NOT NULL ,
+  `type` ENUM('INITIAL','CONFIRM','RESCHEDULE','RESPONSE') NOT NULL ,
   PRIMARY KEY (`smsid`) ,
   CONSTRAINT `fk_smsmessage_appointmentinfoid`
     FOREIGN KEY (`appointmentinfoid` )
     REFERENCES `AppointmentInfo` (`appointmentinfoid` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ApplicationProperties`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ApplicationProperties` ;
+
+CREATE  TABLE IF NOT EXISTS `ApplicationProperties` (
+  `propid` INT NOT NULL AUTO_INCREMENT ,
+  `key` VARCHAR(128) NOT NULL ,
+  `value` VARCHAR(128) NOT NULL ,
+  PRIMARY KEY (`propid`) )
 ENGINE = InnoDB;
 
 

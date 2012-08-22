@@ -12,10 +12,10 @@ public class TestReminderCampaignImpl {
 	public void startReminderCampaign() {
 		ReminderCampaignInfo reminder = new ReminderCampaignInfo();
 		
-		reminder.setPractice("Escorts");
+		reminder.setPractice("Fortis");
 		reminder.setCustomTemplate("Hi", "confirmed", "reschduled");
-		reminder.setAppointmentInfo("1", "8582541888", "Chandra", "Kholia", "11/08/2012", "9:30 am","1", "4");
-		reminder.setAppointmentInfo("2", "8582541556", "Ekpal", "Singh", "11/08/2012", "10:00 am", "2", "1");
+		reminder.setAppointmentInfo("14", "8582541888", "Chandra", "Kholia", "11/08/2012", "9:30 am","1", "4");
+		reminder.setAppointmentInfo("15", "8582541556", "Ekpal", "Singh", "11/08/2012", "10:00 am", "2", "1");
 		
 		Gson gson = new Gson();
 		String jsonrequest = gson.toJson(reminder);

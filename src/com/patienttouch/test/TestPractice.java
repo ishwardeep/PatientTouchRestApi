@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -54,6 +56,15 @@ public class TestPractice {
 	public static void main(String[] args) {
 		
 		try {
+			Pattern pp = Pattern.compile("(\\+1)(.+)");
+			
+			String p = "+18582544277";
+			Matcher m = pp.matcher(p);
+			while (m.matches()) {
+				System.out.println(m.group(0) + "-" + m.group(1) + "-" + m.group(2));
+			}
+			boolean b = p.matches("(\\+1)(.+)");
+			System.out.println(b);
 			//System.out.println(Utility.getDateTimeInyyyyMM());
 			//new TestPractice().getUser("web", "admin");
 			//new TestPractice().abc();

@@ -27,6 +27,7 @@ import com.patienttouch.hibernate.Office;
 import com.patienttouch.hibernate.Patient;
 import com.patienttouch.hibernate.Practice;
 import com.patienttouch.hibernate.SmsMessage;
+import com.patienttouch.hibernate.SmsMessageType;
 import com.patienttouch.hibernate.SmsStatus;
 import com.patienttouch.hibernate.SmsTemplates;
 import com.patienttouch.hibernate.User;
@@ -215,7 +216,7 @@ public class ReminderCampaignImpl {
 				appointmentInfo.setAppointmentDate(new Date(request.getAppointmentDate(appointment)));
 				appointmentInfo.setAppointmentTime(request.getAppointmentTime(appointment));
 				appointmentInfo.setStatus(AppointmentStatus.TRYING);
-				appointmentInfo.setUpdateTime(new Date(System.currentTimeMillis()));
+				appointmentInfo.setLastUpdateTime(new Date(System.currentTimeMillis()));
 				//Add patient info
 				appointmentInfos.add(appointmentInfo);
 				
@@ -229,6 +230,7 @@ public class ReminderCampaignImpl {
 				message.setAppointmentInfo(appointmentInfo);
 				message.setPhoneNumber(appointee.getPhone());
 				message.setStatus(SmsStatus.SMS_SUBMISSION_PENDING);
+				message.setType(SmsMessageType.INITIAL);
 				
 				msgList = new ArrayList<SmsMessage>();
 				msgList.add(message);
@@ -245,6 +247,7 @@ public class ReminderCampaignImpl {
 			reminder.setAppointmentInfo(appointmentInfos);
 			reminder.setStatus(CampaignStatus.RUNNING);
 			reminder.setScheduleTime(new Date(System.currentTimeMillis()));
+			reminder.setLastUpdateTime(new Date(System.currentTimeMillis()));
 			
 			ret = DbOperations.addToDb(null, reminder);
 			if (ret != ErrorCodes.SUCCESS) {
@@ -418,6 +421,62 @@ public class ReminderCampaignImpl {
 					session.getTransaction().rollback();
 				}
 				return null;
+			}
+
+			if (startTransaction) {
+				session.getTransaction().commit();
+			}
+
+		} catch (Exception e) {
+			if (startTransaction == true && session != null
+					&& session.getTransaction().isActive()) {
+				session.getTransaction().rollback();
+			}
+			System.out.println("dbLookup Exception");
+			e.printStackTrace();
+		}
+
+		return results;
+	}
+	
+	/**
+	 * This method is used to fetch details for campaigns
+	 * @param sesssion
+	 * @param Query
+	 * @return
+	 */
+
+	public static List<Campaign> getCampaignInfo(Session dbsession, String query) {
+		boolean startTransaction = false;
+		Session session = null;
+		Practice p;
+		List<Campaign> results = null;
+		
+		try {
+			if (dbsession != null) {
+				session = dbsession;
+			} else {
+				startTransaction = true;
+				session = DbOperations.getDbSession();
+			}
+
+			if (startTransaction) {
+				session.getTransaction().begin();
+			}
+			Query q = session.createQuery(query);
+
+			results = q.list();
+			if (results == null || results.isEmpty()) {
+				if (startTransaction == true && session != null
+						&& session.getTransaction().isActive()) {
+					session.getTransaction().rollback();
+				}
+				return null;
+			}
+			
+			for (Campaign c : results) {
+				c.getAppointmentInfo();
+				break;
 			}
 
 			if (startTransaction) {

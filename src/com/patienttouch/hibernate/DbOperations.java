@@ -28,6 +28,7 @@ public class DbOperations {
 			config.addAnnotatedClass(AppointmentInfo.class);
 			config.addAnnotatedClass(SmsMessage.class);
 			config.addAnnotatedClass(Waitlist.class);
+			config.addAnnotatedClass(ApplicationProperties.class);
 			config.configure();
 
 			_factory = config.buildSessionFactory();

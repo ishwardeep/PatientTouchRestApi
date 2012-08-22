@@ -31,6 +31,7 @@ public class Campaign {
 	private boolean followUpCampaign;
 	private Date scheduleTime;
 	private CampaignStatus status;
+	private Date lastUpdateTime;
 	private List<AppointmentInfo> appointmentInfo;
 	
 	@Id
@@ -115,6 +116,14 @@ public class Campaign {
 	}
 	public void setStatus(CampaignStatus status) {
 		this.status = status;
+	}
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+	public void setLastUpdateTime(Date lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
 	}
 	
 	@OneToMany(targetEntity=AppointmentInfo.class, mappedBy="campaign",

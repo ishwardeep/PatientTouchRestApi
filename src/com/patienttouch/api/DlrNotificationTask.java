@@ -10,13 +10,14 @@ import com.patienttouch.hibernate.AppointmentInfo;
 import com.patienttouch.hibernate.AppointmentStatus;
 import com.patienttouch.hibernate.DbOperations;
 import com.patienttouch.hibernate.SmsMessage;
+import com.patienttouch.hibernate.SmsMessageType;
 import com.patienttouch.hibernate.SmsStatus;
 import com.patienttouch.sms.threeci.EventNotification;
 import com.patienttouch.sms.threeci.ThreeCiSmsProvider;
 
 public class DlrNotificationTask implements Runnable {
+	private final EventNotification en;
 	
-	EventNotification en;
 	public DlrNotificationTask(EventNotification evt) {
 		this.en = evt;
 	}
@@ -95,12 +96,14 @@ public class DlrNotificationTask implements Runnable {
 			if (this.en.detailedStatusDescription != null && !this.en.detailedStatusDescription.isEmpty()) {
 				smsmessage.setMessageDeliveryStatus(this.en.detailedStatusDescription);
 			}
-			appointment.setUpdateTime(new Date(System.currentTimeMillis()));
+			appointment.setLastUpdateTime(new Date(System.currentTimeMillis()));
 			
 			session = DbOperations.getDbSession();
 			session.getTransaction().begin();
 			session.update(smsmessage);
-			session.update(appointment);
+			if (smsmessage.getType() == SmsMessageType.INITIAL) {
+				session.update(appointment);
+			}
 			session.getTransaction().commit();
 			
 		}

@@ -10,4 +10,10 @@ import org.xmappr.RootElement;
 public class EventNotifications {
 	@Element
 	public List<EventNotification> eventNotification;
+	
+	@Element
+	public List<SubscriptionNotification> subscriptionNotification;
+	
+	@Element
+	public List<CancelSubscriptionNotification> cancelSubscriptionNotification;
 }

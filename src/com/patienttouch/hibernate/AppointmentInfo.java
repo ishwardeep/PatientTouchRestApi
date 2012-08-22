@@ -28,7 +28,7 @@ public class AppointmentInfo {
 	private Patient appointee;
 	private Date appointmentDate;
 	private String appointmentTime;
-	private Date updateTime;
+	private Date lastUpdateTime;
 	private AppointmentStatus status;
 	private List<SmsMessage> smsMessages;
 	
@@ -93,11 +93,11 @@ public class AppointmentInfo {
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date getUpdateTime() {
-		return updateTime;
+	public Date getLastUpdateTime() {
+		return lastUpdateTime;
 	}
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
+	public void setLastUpdateTime(Date lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
 	}
 	
 	@Enumerated(EnumType.STRING)

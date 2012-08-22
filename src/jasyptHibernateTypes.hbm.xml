@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+ 
+<hibernate-mapping package="com.patienttouch.hibernate">
+ 
+    <!-- VARCHAR, CLOB, TEXT based types -->
+     
+    <typedef name="encryptedString" class="org.jasypt.hibernate4.type.EncryptedStringType">
+        <!--  param name="encryptorRegisteredName">jasyptHibernateEncryptor</param-->
+        <param name="algorithm">PBEWithMD5AndTripleDES</param>
+      	<param name="password">jasypt</param>
+      	<param name="keyObtentionIterations">1000</param>
+    </typedef>
+     
+    <typedef name="encryptedBigDecimalAsString" class="org.jasypt.hibernate4.type.EncryptedBigDecimalAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedBigIntegerAsString" class="org.jasypt.hibernate4.type.EncryptedBigIntegerAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedBooleanAsString" class="org.jasypt.hibernate4.type.EncryptedBooleanAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedByteAsString" class="org.jasypt.hibernate4.type.EncryptedByteAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedCalendarAsString" class="org.jasypt.hibernate4.type.EncryptedCalendarAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedDateAsString" class="org.jasypt.hibernate4.type.EncryptedDateAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedDoubleAsString" class="org.jasypt.hibernate4.type.EncryptedDoubleAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedFloatAsString" class="org.jasypt.hibernate4.type.EncryptedFloatAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedIntegerAsString" class="org.jasypt.hibernate4.type.EncryptedIntegerAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedLongAsString" class="org.jasypt.hibernate4.type.EncryptedLongAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedShortAsString" class="org.jasypt.hibernate4.type.EncryptedShortAsStringType">
+        <param name="encryptorRegisteredName">jasyptHibernateEncryptor</param>
+    </typedef>
+ 
+ 
+    <!-- VARBINARY, BLOB based type -->
+    <typedef name="encryptedBinary" class="org.jasypt.hibernate4.type.EncryptedBinaryType">
+        <param name="encryptorRegisteredName">jasyptByteHibernateEncryptor</param>
+    </typedef>
+ 
+    <!-- NUMERIC, NUMBER based types -->   
+    <typedef name="encryptedBigDecimal" class="org.jasypt.hibernate4.type.EncryptedBigDecimalType">
+        <param name="encryptorRegisteredName">jasyptBigDecimalHibernateEncryptor</param>
+    </typedef>
+ 
+    <typedef name="encryptedBigInteger" class="org.jasypt.hibernate.type.EncryptedBigIntegerType">
+        <param name="encryptorRegisteredName">jasypBigIntegertHibernateEncryptor</param>
+    </typedef>
+     
+</hibernate-mapping>

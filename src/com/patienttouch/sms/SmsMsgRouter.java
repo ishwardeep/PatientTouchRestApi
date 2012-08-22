@@ -1,9 +1,12 @@
 package com.patienttouch.sms;
 
 import com.patienttouch.api.DlrNotificationTask;
+import com.patienttouch.api.PostNotificationTask;
 import com.patienttouch.api.ReminderTask;
 import com.patienttouch.hibernate.SmsMessage;
+import com.patienttouch.sms.threeci.CancelSubscriptionNotification;
 import com.patienttouch.sms.threeci.EventNotification;
+import com.patienttouch.sms.threeci.SubscriptionNotification;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -56,5 +59,11 @@ public class SmsMsgRouter {
 	public void processDeliveryNotification(EventNotification deliveryNotification) {
 		DlrNotificationTask task = new DlrNotificationTask(deliveryNotification);
 		sendSmsService.execute(task);
+	}
+	
+	public void processPostNotification(SubscriptionNotification subscriptionNotification,
+			CancelSubscriptionNotification csn) {
+		PostNotificationTask postTask = new PostNotificationTask(subscriptionNotification, csn);
+		sendSmsService.execute(postTask);
 	}
 }

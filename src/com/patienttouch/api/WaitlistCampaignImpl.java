@@ -29,6 +29,7 @@ import com.patienttouch.hibernate.Office;
 import com.patienttouch.hibernate.Patient;
 import com.patienttouch.hibernate.Practice;
 import com.patienttouch.hibernate.SmsMessage;
+import com.patienttouch.hibernate.SmsMessageType;
 import com.patienttouch.hibernate.SmsStatus;
 import com.patienttouch.hibernate.SmsTemplates;
 import com.patienttouch.hibernate.User;
@@ -60,7 +61,7 @@ public class WaitlistCampaignImpl {
 		String confirmMsg = null, rescheduleMsg = null;
 		String query, interMsgSpacing;
 		String smsMessageText;
-		boolean followUp = false;
+		boolean followUp = false, runCampaign = false;
 		Response response = new Response();
 		Office office;
 		Doctor doctor;
@@ -262,7 +263,7 @@ public class WaitlistCampaignImpl {
 					appointmentInfo.setAppointmentDate(new Date(request.getAppointmentDate(appointment)));
 					appointmentInfo.setAppointmentTime(time);
 					appointmentInfo.setStatus(AppointmentStatus.TRYING);
-					appointmentInfo.setUpdateTime(new Date(System.currentTimeMillis()));
+					appointmentInfo.setLastUpdateTime(new Date(System.currentTimeMillis()));
 						
 					//Add patient info
 					appointmentInfos.add(appointmentInfo);
@@ -277,7 +278,8 @@ public class WaitlistCampaignImpl {
 					message.setAppointmentInfo(appointmentInfo);
 					message.setPhoneNumber(appointe.getPhone());
 					message.setStatus(SmsStatus.SMS_SUBMISSION_PENDING);
-						
+					message.setType(SmsMessageType.INITIAL);
+					
 					msgList = new ArrayList<SmsMessage>();
 					msgList.add(message);
 					appointmentInfo.setSmsMessages(msgList);
@@ -292,7 +294,8 @@ public class WaitlistCampaignImpl {
 				waitlistCampaign.setAppointmentInfo(appointmentInfos);
 				waitlistCampaign.setStatus(CampaignStatus.RUNNING);
 				waitlistCampaign.setScheduleTime(new Date(System.currentTimeMillis()));
-					
+				waitlistCampaign.setLastUpdateTime(new Date(System.currentTimeMillis()));
+				
 				ret = DbOperations.addToDb(null, waitlistCampaign);
 				if (ret != ErrorCodes.SUCCESS) {
 					response.getResults().setStatus(ErrorCodes.SERVER_ERROR);

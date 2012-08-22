@@ -11,6 +11,6 @@ public class SuccessNotification {
 	public String phoneNumber;
 	@Element
 	public List<String> message;
-	@Element()
+	@Element
 	public String triggerId;
 }

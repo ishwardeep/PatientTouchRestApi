@@ -7,11 +7,26 @@ import com.patienttouch.hibernate.UserRole;
 
 public class TestUserImpl {
 	public static void main(String args[]) {
-		new TestUserImpl().addUser();
+		//new TestUserImpl().addUser();
+		new TestUserImpl().addUser1();
 		//new TestUserImpl().updateUser();
 	}
 	
 	public void addUser() {
+		UserInfo request = new UserInfo();
+
+		request.setPracticeName("Escorts");
+		request.setUserInfo(null, "admin", "admin", "admin", "Ishwardeep", "Singh", UserRole.ADMIN);
+		
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(request);
+		System.out.println(jsonReq);
+		String response = UserImpl.addUser(jsonReq);
+
+		System.out.println(response);
+	}
+	
+	public void addUser1() {
 		UserInfo request = new UserInfo();
 
 		request.setPracticeName("Escorts");

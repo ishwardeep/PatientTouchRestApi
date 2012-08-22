@@ -25,6 +25,7 @@ public class SmsMessage {
 	private String vendorStatusMessage;
 	private String messageDeliveryStatus;
 	private SmsStatus status;
+	private SmsMessageType type;
 	
 	@Id
 	@GeneratedValue
@@ -100,6 +101,14 @@ public class SmsMessage {
 	}
 	public void setStatus(SmsStatus status) {
 		this.status = status;
+	}
+	
+	@Enumerated(EnumType.STRING)
+	public SmsMessageType getType() {
+		return type;
+	}
+	public void setType(SmsMessageType type) {
+		this.type = type;
 	}
 	
 }

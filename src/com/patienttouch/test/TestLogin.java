@@ -14,6 +14,9 @@ public class TestLogin {
 		
 		System.out.println(response);
 		
+		response = l.login("admin", "admin");
+		System.out.println(response);
+		
 		response = l.login("web", "web");
 		System.out.println(response);
 		
