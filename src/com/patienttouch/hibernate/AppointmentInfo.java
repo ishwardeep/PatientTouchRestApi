@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="AppointmentInfo")
-public class AppointmentInfo {
+public class AppointmentInfo implements Comparable<AppointmentInfo> {
 	private int appointmentinfoid;
 	private Campaign campaign;
 	private Doctor doctor;
@@ -30,6 +30,7 @@ public class AppointmentInfo {
 	private String appointmentTime;
 	private Date lastUpdateTime;
 	private AppointmentStatus status;
+	private int priority;
 	private List<SmsMessage> smsMessages;
 	
 	@Id
@@ -109,12 +110,30 @@ public class AppointmentInfo {
 	}
 	
 	@OneToMany(targetEntity=SmsMessage.class, mappedBy="appointmentInfo", 
-				cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+				cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	public List<SmsMessage> getSmsMessages() {
 		return smsMessages;
 	}
 	public void setSmsMessages(List<SmsMessage> smsMessages) {
 		this.smsMessages = smsMessages;
+	}
+	public int getPriority() {
+		return priority;
+	}
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+	
+	@Override
+	public int compareTo(AppointmentInfo o) {
+		if (this.priority < o.getPriority()) {
+			return -1;
+		}
+		else if (this.priority > o.getPriority()) {
+			return 1;
+		}
+		
+		return 0;
 	}
 
 }

@@ -312,7 +312,8 @@ public class DoctorImpl {
 		boolean fetchDetailsForOfficeDoctor = false, fetchDetailsForDoctor = false;
 		Response response = new Response();
 		Session session = null;
-		List<Doctor> doctors;
+		HashSet<String> uniqDocs = new HashSet<String>();
+		List<Doctor> tmpDoctors, doctors = null;
 		List<Office> offices = null;
 
 		// parameter validation
@@ -366,19 +367,34 @@ public class DoctorImpl {
 		}
 
 		if (fetchDoctorsForPracticeOffice || fetchDetailsForOfficeDoctor) {
-			Office office = DoctorImpl.getDoctorsForOffice(null,
-					p.getPracticeid(), officeName);
-			if (office == null) {
-				response.getResults().setStatus(ErrorCodes.INVALID_OFFICE_NAME);
-				response.getResults().setEdesc(
+			//Office name may contain multiple offices delimited by ~ (tilde). We need to fetch
+			//Doctors for all these offices
+			String officeNames[] = officeName.split("~");
+			
+			for (String oName : officeNames) {
+				Office office = DoctorImpl.getDoctorsForOffice(null,
+					p.getPracticeid(), oName);
+				if (office == null) {
+					response.getResults().setStatus(ErrorCodes.INVALID_OFFICE_NAME);
+					response.getResults().setEdesc(
 						ErrorCodes.edesc[ErrorCodes.INVALID_OFFICE_NAME]);
-				response.getResults().setNumResults(0);
+					response.getResults().setNumResults(0);
 
-				return gson.toJson(response);
+					return gson.toJson(response);
+				}
+
+				if (doctors == null) {
+					doctors = new ArrayList<Doctor>();
+				}
+				
+				tmpDoctors = office.getDoctor();
+				for (Doctor d : tmpDoctors) {
+					if (!uniqDocs.contains(Integer.toString(d.getDoctorid()))) {
+						uniqDocs.add(Integer.toString(d.getDoctorid()));
+						doctors.add(d);
+					}
+				}
 			}
-
-			doctors = office.getDoctor();
-
 		} else if (fetchDetailsForDoctor) {
 
 			Doctor doc = DoctorImpl.getDoctorDetails(null, p.getPracticeid(),
@@ -400,8 +416,11 @@ public class DoctorImpl {
 
 		DoctorInfo doctor = new DoctorInfo();
 		doctor.setPracticeName(p.getName());
+		
 		if (fetchDoctorsForPracticeOffice || fetchDetailsForOfficeDoctor) {
-			doctor.setOfficeName(officeName);
+			for (String o : officeName.split("~")) {
+				doctor.setOfficeName(o);
+			}
 		} else if (fetchDetailsForDoctor) {
 			for (Office off : offices) {
 				doctor.setOfficeName(off.getName());

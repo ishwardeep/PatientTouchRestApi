@@ -19,11 +19,15 @@ public class Utility {
 	private static final SimpleDateFormat dateTime = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 	private static final SimpleDateFormat dateTime_yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static final SimpleDateFormat date = new SimpleDateFormat("yyyy/MM/dd");
+	private static final SimpleDateFormat dateInYYYYHyphenMMHyphenDD = new SimpleDateFormat("yyyy-MM-dd");
+	
 	private static final Map<String, String> appProperty = new HashMap<String, String>();
 	
 	public static final String REMINDER_RESPONSE_TIMEOUT_IN_MS = "reminder_response_timeout_in_ms";
 	public static final String WAITLIST_RESPONSE_TIMEOUT_IN_MS = "waitlist_response_timeout_in_ms";
 	public static final String WAITLIST_INTERMSG_SPACING_IN_MS = "waitlist_intermsg_spacing_in_ms";
+	public static final String CAMPAIGN_ANALYZER_SCHEDULE_TIME_IN_MS = "campaign_analyzer_schedule_time_in_ms";
+	public static final String SCHEDULE_THREAD_POOL_SIZE = "schedule_thread_pool_size";
 	
 	public static String getDateTimeInyyyyMMdd() {
 		return dateTime.format(new Date());
@@ -35,6 +39,10 @@ public class Utility {
 	
 	public static String getDateInyyyyMMdd(Date d) {
 		return date.format(d);
+	}
+	
+	public static Date parseDate(String dateString) throws Exception{
+		return dateInYYYYHyphenMMHyphenDD.parse(dateString);
 	}
 	
 	/**
@@ -56,7 +64,7 @@ public class Utility {
 		return diff;
 	}
 	
-	public static String getProperty(String key) {
+	public static String getProperty(Session session, String key) {
 		long lastRefreshTime =0, currentTime = System.currentTimeMillis(), elapsedTime;
 		String tmpStr;
 		String query = "from ApplicationProperties";
@@ -70,7 +78,7 @@ public class Utility {
 		//reload properties from DB every 5 minutes
 		if (tmpStr == null || (elapsedTime > 300000)) {
 			synchronized(Utility.class) {
-				List<ApplicationProperties> prop = Utility.getAppointmentInfo(null, query);
+				List<ApplicationProperties> prop = Utility.getAppointmentInfo(session, query);
 				if (prop != null) {
 					Utility.appProperty.put("refreshTime", Long.toString(currentTime));
 					for (ApplicationProperties p : prop) {

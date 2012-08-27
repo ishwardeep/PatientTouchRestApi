@@ -186,8 +186,11 @@ CREATE  TABLE IF NOT EXISTS `Campaign` (
   `confirmMessage` TEXT NULL ,
   `rescheduleMessage` TEXT NULL ,
   `scheduleTime` DATETIME NOT NULL ,
-  `status` ENUM('SCHEDULED','RUNNING','COMPLETE') NOT NULL ,
+  `status` ENUM('WAIT','SCHEDULED','RUNNING','COMPLETE','STOPPED') NOT NULL ,
   `lastUpdateTime` DATETIME NOT NULL ,
+  `dependentCampaignId` VARCHAR(64) NULL ,
+  `appointeeResponseTimeInMs` BIGINT NOT NULL ,
+  `interMessageSpacingInMs` BIGINT NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`campaignid`) ,
   CONSTRAINT `fk_campaign_practiceid`
     FOREIGN KEY (`practiceid` )
@@ -232,7 +235,8 @@ CREATE  TABLE IF NOT EXISTS `AppointmentInfo` (
   `appointmentDate` DATE NOT NULL ,
   `appointmentTime` VARCHAR(12) NOT NULL ,
   `lastUpdateTime` TIMESTAMP NOT NULL ,
-  `status` ENUM('TRYING','UNABLE_TO_SEND_MESSAGE','MESSAGE_SENT','NOT_DELIVERED','INVALID_PHONE','DELIVERED','ACCEPTED','CANCEL','RESCHEDULE','PROBLEM','NO_RESPONSE') NOT NULL ,
+  `priority` INT NOT NULL DEFAULT 1 ,
+  `status` ENUM('WAIT','TRYING','UNABLE_TO_SEND_MESSAGE','MESSAGE_SENT','NOT_DELIVERED','DELIVERED','ACCEPTED','CANCEL','RESCHEDULE','PROBLEM','NO_RESPONSE','DELETED') NOT NULL ,
   PRIMARY KEY (`appointmentinfoid`) ,
   CONSTRAINT `fk_appointmentinfo_campaignid`
     FOREIGN KEY (`campaignid` )
@@ -326,6 +330,26 @@ CREATE  TABLE IF NOT EXISTS `ApplicationProperties` (
   `key` VARCHAR(128) NOT NULL ,
   `value` VARCHAR(128) NOT NULL ,
   PRIMARY KEY (`propid`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `UserApiInvocationLog`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `UserApiInvocationLog` ;
+
+CREATE  TABLE IF NOT EXISTS `UserApiInvocationLog` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `userid` INT NOT NULL ,
+  `api` ENUM('REMINDER_STATUS','WAITLIST_STATUS') NOT NULL ,
+  `lastAccessTime` DATETIME NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `unique_userapilog_userid_api` (`userid` ASC, `api` ASC) ,
+  CONSTRAINT `fk_userapilog_userid`
+    FOREIGN KEY (`userid` )
+    REFERENCES `User` (`userid` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 

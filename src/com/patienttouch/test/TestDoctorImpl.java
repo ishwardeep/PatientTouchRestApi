@@ -8,10 +8,11 @@ import com.patienttouch.client.DoctorInfo;
 public class TestDoctorImpl {
 	public static void main(String args[]) {
 		//new TestDoctorImpl().addDoctor();
-		new TestDoctorImpl().addDoctor1();
+		//new TestDoctorImpl().addDoctor1();
+		//new TestDoctorImpl().addDoctor2();
 		//new TestDoctorImpl().updateDoctor();
 		//new TestDoctorImpl().getAllDoctorsForPractice();
-		//new TestDoctorImpl().getDoctorsForPracticeOffice();
+		new TestDoctorImpl().getDoctorsForPracticeOffice();
 		//new TestDoctorImpl().getDetailsForDoctorOffice();
 		//new TestDoctorImpl().getOfficeForDoctor();
 		//new TestDoctorImpl().getDoctorById();
@@ -66,6 +67,21 @@ public class TestDoctorImpl {
 		System.out.println(response);
 	}
 	
+	public void addDoctor2() {
+		DoctorInfo request = new DoctorInfo();
+
+		request.setPracticeName("Fortis");
+		request.setOfficeName("San Diego Office");
+		request.setDoctorInfo(null, "Vimpy", "Batra", "Vimpy");
+		
+		Gson gson = new Gson();
+		String jsonReq = gson.toJson(request);
+		System.out.println(jsonReq);
+		String response = DoctorImpl.addDoctor(jsonReq);
+
+		System.out.println(response);
+	}
+	
 	public void getAllDoctorsForPractice() {
 		String response = DoctorImpl.getDoctor("Fortis","","","","");
 
@@ -73,7 +89,7 @@ public class TestDoctorImpl {
 	}
 	
 	public void getDoctorsForPracticeOffice() {
-		String response = DoctorImpl.getDoctor("Fortis","Miami Office","","","");
+		String response = DoctorImpl.getDoctor("Fortis","Miami Office~San Diego Office","","","");
 
 		System.out.println(response);
 	}

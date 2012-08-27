@@ -1,5 +1,5 @@
 package com.patienttouch.hibernate;
 
 public enum CampaignStatus {
-	SCHEDULED, RUNNING, COMPLETE
+	WAIT, SCHEDULED, RUNNING, COMPLETE, STOPPED
 }

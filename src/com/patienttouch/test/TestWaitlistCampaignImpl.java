@@ -27,8 +27,8 @@ public class TestWaitlistCampaignImpl {
 		waitlist.setCustomTemplate("[First] has an appt with Dr [Doctor] on [Date] [Time] at our [Office] office. Reply with 1 to confirm and 2 to reschedule.", 
 				"Thank you for confirming your appointment. Please call our office for any changes [Office TN]", 
 				"We're sorry you are unable to make your appointment. Please call our office to reschedule [Office TN]");
-		waitlist.setWaitlistInfo(null, "1", "8582544277", "Chandra", "Kholia");
-		waitlist.setWaitlistInfo(null, "8", "8582541556", "Ekpal", "Singh");
+		waitlist.setWaitlistInfo(null, "14", "8582544277", "Chandra", "Kholia");
+		waitlist.setWaitlistInfo(null, "15", "8582541556", "Ekpal", "Singh");
 		
 		waitlist.setWaitlistAppointmentInfo("15/08/2012", appointmentTime, "1", "4", "5");
 		
@@ -42,12 +42,12 @@ public class TestWaitlistCampaignImpl {
 	}
 	
 	public void getCampaignStatus() {
-		String response = WaitlistCampaignImpl.getWaitlistStatus("Fortis");
+		String response = WaitlistCampaignImpl.getWaitlistStatus("Fortis","","","");
 		System.out.println(response);
 	}
 	
 	public void getCampaignDetail() {
-		String response = WaitlistCampaignImpl.getWaitlistAppointmentInfoStatus("38");
+		String response = WaitlistCampaignImpl.getWaitlistAppointmentInfoStatus("2");
 		System.out.println(response);
 	}
 	

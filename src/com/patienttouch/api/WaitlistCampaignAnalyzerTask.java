@@ -1,5 +1,6 @@
 package com.patienttouch.api;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,30 +11,29 @@ import com.patienttouch.hibernate.AppointmentStatus;
 import com.patienttouch.hibernate.Campaign;
 import com.patienttouch.hibernate.CampaignStatus;
 import com.patienttouch.hibernate.DbOperations;
-
 import com.patienttouch.hibernate.SmsMessage;
 import com.patienttouch.hibernate.SmsMessageType;
+import com.patienttouch.hibernate.SmsStatus;
+import com.patienttouch.sms.SmsFormater;
+import com.patienttouch.sms.SmsMsgRouter;
 import com.patienttouch.util.Utility;
 
-public class ReminderCampaignAnalyzerTask implements Runnable {
-	//private static final long defaultReminderResponseTimeoutInMs = 300000;
-
+public class WaitlistCampaignAnalyzerTask implements Runnable {
 	private final Campaign campaign;
 
-	public ReminderCampaignAnalyzerTask(Campaign campaign) {
+	public WaitlistCampaignAnalyzerTask(Campaign campaign) {
 		this.campaign = campaign;
 	}
 
 	@Override
 	public void run() {
-		boolean pendingAppointments = false;
-		long diffInMs, reminderResposeTimeoutInMs;// = ReminderCampaignAnalyzerTask.defaultReminderResponseTimeoutInMs;
-		//String tmpStr;
+		boolean pendingAppointments = false, sendMsgToNextAppointee = false;
+		long diffInMs, waitlistResposeTimeoutInMs;
 		String query;
 		Date smsTimestamp;
 		Session session = null;
 		List<AppointmentInfo> appInfos;
-		List<SmsMessage> smsMessages;
+		List<SmsMessage> smsMessages, smsToBeSent = null;
 		List<Campaign> campaigns;
 		AppointmentStatus status;
 
@@ -42,20 +42,21 @@ public class ReminderCampaignAnalyzerTask implements Runnable {
 
 			session = DbOperations.getDbSession();
 			session.getTransaction().begin();
+			
 			campaigns = CampaignImpl.getCampaignInfo(session, query);
 			if (campaigns == null) {
-				System.out.println("No reminder campaign running");
+				System.out.println("No reminder campaign running for campaign id [" + this.campaign.getCampaignid() + "]");
 				return;
 			}
 
 			for (Campaign c : campaigns) {
-				reminderResposeTimeoutInMs = c.getAppointeeResponseTimeInMs();
+				waitlistResposeTimeoutInMs = c.getAppointeeResponseTimeInMs();
 				appInfos = c.getAppointmentInfo();
 				for (AppointmentInfo appInfo : appInfos) {
 					status = appInfo.getStatus();
-					// TRYING,UNABLE_TO_SEND_MESSAGE, MESSAGE_SENT,
-					// NOT_DELIVERED,INVALID_PHONE,DELIVERED,
-					// ACCEPTED,CANCEL,RESCHEDULE,PROBLEM
+					//WAIT,TRYING,UNABLE_TO_SEND_MESSAGE, MESSAGE_SENT, 
+					//NOT_DELIVERED,INVALID_PHONE,DELIVERED,ACCEPTED,CANCEL,
+					//RESCHEDULE,PROBLEM,NO_RESPONSE
 					if (status == AppointmentStatus.MESSAGE_SENT
 							|| status == AppointmentStatus.DELIVERED) {
 						// waiting for response from the appointee
@@ -68,10 +69,10 @@ public class ReminderCampaignAnalyzerTask implements Runnable {
 										smsTimestamp);
 								System.out.println("Time difference in ms ["
 										+ diffInMs + "]");
-								if (diffInMs > reminderResposeTimeoutInMs) {
+								if (diffInMs > waitlistResposeTimeoutInMs) {
 									appInfo.setStatus(AppointmentStatus.NO_RESPONSE);
-									appInfo.setLastUpdateTime(new Date(System.currentTimeMillis()));
 									session.update(appInfo);
+									sendMsgToNextAppointee = true;		
 								} else {
 									pendingAppointments = true;
 								}
@@ -79,7 +80,20 @@ public class ReminderCampaignAnalyzerTask implements Runnable {
 							}
 						}
 					}
+					else if (status == AppointmentStatus.WAIT ||
+							 status == AppointmentStatus.TRYING) 
+					{
+						pendingAppointments = true;
+					}
 				}
+				
+				if (sendMsgToNextAppointee) {
+					if (smsToBeSent == null) {
+						smsToBeSent = new ArrayList<SmsMessage>();
+					}
+					CampaignImpl.sendSmsToAppointeeInWaitState(session, c, smsToBeSent);
+				}
+				
 				if (!pendingAppointments) {
 					c.setStatus(CampaignStatus.COMPLETE);
 					c.setLastUpdateTime(new Date(System.currentTimeMillis()));
@@ -87,8 +101,12 @@ public class ReminderCampaignAnalyzerTask implements Runnable {
 				}
 			}
 			
-
 			session.getTransaction().commit();
+			if (sendMsgToNextAppointee) {
+				for (SmsMessage sms : smsToBeSent) {
+					SmsMsgRouter.getInstance().sendMessage(sms);
+				}
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 			if (session != null && session.getTransaction().isActive()) {

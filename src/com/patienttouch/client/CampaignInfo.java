@@ -23,7 +23,7 @@ public class CampaignInfo extends Request {
 	}
 	
 	public List<Map<String,Object>> getWaitlistCampaigns() {
-		return (ArrayList<Map<String, Object>>) this.request.get("waitlistCampaign");
+		return (ArrayList<Map<String, Object>>) this.request.get("campaignInfo");
 	}
 	
 	public String getCampaignId(Map<String,Object> waitlist) {
@@ -59,14 +59,15 @@ public class CampaignInfo extends Request {
 	}
 	
 	public void setCampaignInfo(String campaignid, String campaignName, String officeid, String office, 
-			String doctorid, String doctor, String appDate, String appTime, CampaignStatus status) {
+			String doctorid, String doctor, String appDate, String appTime, CampaignStatus status, 
+			boolean alreadyViewed) {
 		List<Map<String,Object>> campaignList;
 		Map<String, Object> campaign = new HashMap<String, Object>();
 		
-		campaignList = (ArrayList<Map<String, Object>>) this.request.get("waitlistCampaign");
+		campaignList = (ArrayList<Map<String, Object>>) this.request.get("campaignInfo");
 		if (campaignList == null) {
 			campaignList = new ArrayList<Map<String, Object>>();
-			this.request.put("waitlistCampaign", campaignList);
+			this.request.put("campaignInfo", campaignList);
 		}
 		campaignList.add(campaign);
 		
@@ -87,18 +88,19 @@ public class CampaignInfo extends Request {
 		campaign.put("appointmentDate", appDate);
 		campaign.put("appointmentTime", appTime);	
 		campaign.put("status", status);
+		campaign.put("alreadyViewed", alreadyViewed);
 	}
 	
 	public void setCampaignAppointmentInfo(String campaignid, String campaignName, String officeid, String office, 
 			String doctorid, String doctor, String appDate, String appTime, String appointmentInfoid, String appointeeFirstName, 
-			String appointeeLastName, AppointmentStatus status) {
+			String appointeeLastName, AppointmentStatus status, boolean rowType) {
 		List<Map<String,Object>> campaignList;
 		Map<String, Object> campaign = new HashMap<String, Object>();
 		
-		campaignList = (ArrayList<Map<String, Object>>) this.request.get("waitlistCampaign");
+		campaignList = (ArrayList<Map<String, Object>>) this.request.get("campaignInfo");
 		if (campaignList == null) {
 			campaignList = new ArrayList<Map<String, Object>>();
-			this.request.put("waitlistCampaign", campaignList);
+			this.request.put("campaignInfo", campaignList);
 		}
 		campaignList.add(campaign);
 		
@@ -126,9 +128,10 @@ public class CampaignInfo extends Request {
 		campaign.put("appointeeFirstName", appointeeFirstName);
 		campaign.put("appointeeLastName", appointeeLastName);
 		campaign.put("status", status);
+		campaign.put("alreadyViewed", rowType);
 	}
 	
-	public void setAppointmentSmsInfo(String campaignid, String appointmentInfoid, String smsid,
+	public void setAppointmentSmsInfo(String campaignid, String campaignName, String appointmentInfoid, String smsid,
 			String smsText, String smsTimestamp, String phoneNumber, SmsStatus status) {
 		List<Map<String,Object>> campaignList;
 		Map<String, Object> campaign = new HashMap<String, Object>();
@@ -142,6 +145,10 @@ public class CampaignInfo extends Request {
 		
 		if (campaignid != null && !campaignid.isEmpty()) {
 			campaign.put("campaignid", campaignid);
+		}
+		
+		if (campaignName != null && !campaignName.isEmpty()) {
+			campaign.put("campaignname", campaignName);
 		}
 		
 		if (appointmentInfoid != null && !appointmentInfoid.isEmpty()) {

@@ -28,8 +28,8 @@ public class TestDlrNotification {
 		"<price><![CDATA[0]]></price>" +
 		"<messageText><![CDATA[Hi, this is the MT sent to the end user]]></messageText>" +
 		"<clientId><![CDATA[7435]]></clientId>" +
-		"<clientTag><![CDATA[appointmentinfoid=4:smsid=4]]></clientTag>" +
-		"<statusId><![CDATA[1]]></statusId>" +
+		"<clientTag><![CDATA[appointmentinfoid=8:smsid=12]]></clientTag>" +
+		"<statusId><![CDATA[2]]></statusId>" +
 		"<statusDescription><![CDATA[Message submitted to carrier/gateway]]></statusDescription>" +
 		"<detailedStatusId><![CDATA[1002]]></detailedStatusId>" +
 		"<detailedStatusDescription><![CDATA[Invalid destination]]></detailedStatusDescription>" +

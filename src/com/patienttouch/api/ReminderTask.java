@@ -12,6 +12,7 @@ import com.patienttouch.hibernate.AppointmentInfo;
 import com.patienttouch.hibernate.AppointmentStatus;
 import com.patienttouch.hibernate.DbOperations;
 import com.patienttouch.hibernate.SmsMessage;
+import com.patienttouch.hibernate.SmsMessageType;
 import com.patienttouch.hibernate.SmsStatus;
 import com.patienttouch.sms.SmsProvider;
 import com.patienttouch.sms.SmsProviderFactory;
@@ -69,8 +70,9 @@ public class ReminderTask implements Runnable {
 					this.smsMsg.setVendorStatusMessage(sn.message.get(0));
 					this.smsMsg.setTriggerId(sn.triggerId);
 					this.smsMsg.setStatus(SmsStatus.SMS_SUBMITED_SUCCESSFULLY);
-					
-					appointmentInfo.setStatus(AppointmentStatus.MESSAGE_SENT);
+					if (this.smsMsg.getType() == SmsMessageType.INITIAL) {
+						appointmentInfo.setStatus(AppointmentStatus.MESSAGE_SENT);
+					}
 				} else if (response.indexOf("errorNotification") != -1) {
 					xm = new Xmappr(ErrorNotification.class);
 					en = (ErrorNotification) xm.fromXML(reader);
@@ -78,8 +80,10 @@ public class ReminderTask implements Runnable {
 					this.smsMsg.setVendorStatusMessage(en.message.get(0));
 					this.smsMsg.setStatus(SmsStatus.SMS_SUBMISSION_ERROR);
 					
-					appointmentInfo
+					if (this.smsMsg.getType() == SmsMessageType.INITIAL) {
+						appointmentInfo
 							.setStatus(AppointmentStatus.UNABLE_TO_SEND_MESSAGE);
+					}
 				}
 			}
 			// Update message in the database

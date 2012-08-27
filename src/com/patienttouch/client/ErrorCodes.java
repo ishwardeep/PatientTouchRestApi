@@ -75,6 +75,7 @@ public class ErrorCodes {
 	public static final int MANDATORY_PARAMETER_WAITLIST_ID_MISSING = 71;
 	public static final int INVALID_CAMPAIGN_ID = 72;
 	public static final int INVALID_APPOINTMENT_INFO_ID = 73;
+	public static final int MANDATORY_PARAMETER_INTERMSG_SPACING_MISSING = 74;
 	
 	
 	public static final String edesc[] = { 

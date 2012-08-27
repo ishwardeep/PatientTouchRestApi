@@ -10,12 +10,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.patienttouch.api.CampaignImpl;
+import com.patienttouch.api.CampaignManager;
 import com.patienttouch.api.ReminderCampaignImpl;
 import com.patienttouch.api.WaitlistCampaignImpl;
 
-
 @Path("/campaign")
 public class CampaignApi {
+
+	static {
+		//Trying to fetch this instance only to create a schedule thread for Campaign Analyzer
+		CampaignManager.getInstance();
+	}
 	
 	@POST
 	@Path("/setupreminder")
@@ -37,12 +43,13 @@ public class CampaignApi {
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public String getDoctor(
 			@QueryParam("practice") @DefaultValue("") String practiceName,
-			@QueryParam("officeid") @DefaultValue("") String officeid,
-			@QueryParam("doctorid")  @DefaultValue("") String doctorid) 
+			@QueryParam("userid") @DefaultValue("") String userId,
+			@QueryParam("appointmentStartDate") @DefaultValue("") String appointmentStartDate,
+			@QueryParam("appointmentEndDate")  @DefaultValue("") String appointmentEndDate) 
 	{
 		String response = null;
         try {
-        	//response = ReminderCampaignImpl.(practiceName, officeid, doctorid);
+        	response = ReminderCampaignImpl.getReminderStatus(practiceName, userId, appointmentStartDate, appointmentEndDate);
         }
         catch (Throwable t) {
             t.printStackTrace();
@@ -69,12 +76,15 @@ public class CampaignApi {
 	@Path("/getwaitliststatus")
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public String getWaitlistStatus(
-			@QueryParam("practice") @DefaultValue("") String practiceName
+			@QueryParam("practice") @DefaultValue("") String practiceName,
+			@QueryParam("userid") @DefaultValue("") String userId,
+			@QueryParam("campaignStartDate") @DefaultValue("") String campaignStartDate,
+			@QueryParam("campaignEndDate")  @DefaultValue("") String campaignEndDate
 	) 
 	{
 		String response = null;
         try {
-        	response = WaitlistCampaignImpl.getWaitlistStatus(practiceName);
+        	response = WaitlistCampaignImpl.getWaitlistStatus(practiceName, userId, campaignStartDate, campaignEndDate);
         }
         catch (Throwable t) {
             t.printStackTrace();
@@ -89,7 +99,7 @@ public class CampaignApi {
 			@QueryParam("campaignid") @DefaultValue("") String campaignid) {
 		String response = null;
         try {
-        	response = WaitlistCampaignImpl.getWaitlistAppointmentInfoStatus(campaignid);
+        	response = CampaignImpl.getCampaignAppointmentInfoStatus(campaignid);
         }
         catch (Throwable t) {
             t.printStackTrace();
@@ -104,7 +114,7 @@ public class CampaignApi {
 			@QueryParam("appointmentinfoid") @DefaultValue("") String appointmentinfoid) {
 		String response = null;
         try {
-        	response = WaitlistCampaignImpl.getWaitlistAppointmentDetailStatus(appointmentinfoid);
+        	response = CampaignImpl.getCampaignAppointmentDetailStatus(appointmentinfoid);
         }
         catch (Throwable t) {
             t.printStackTrace();

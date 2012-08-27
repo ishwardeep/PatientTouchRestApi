@@ -17,7 +17,6 @@ import javax.persistence.Table;
 @Table(name="Office")
 public class Office {
 	private int officeid;
-	//private int practiceId;
 	private String name;
 	private String streetAddress1;
 	private String streetAddress2;

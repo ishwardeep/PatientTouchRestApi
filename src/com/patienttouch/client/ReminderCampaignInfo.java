@@ -38,7 +38,9 @@ public class ReminderCampaignInfo extends Request {
 	}
 	
 	public void setTemplate(int templateid, String templateName) {
-		this.request.put("templateId", templateid);
+		if (templateid != 0) {
+			this.request.put("templateId", templateid);
+		}
 		this.request.put("templateName", templateName);
 	}
 	

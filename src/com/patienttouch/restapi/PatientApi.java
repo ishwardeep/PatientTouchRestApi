@@ -12,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.patienttouch.api.PatientImpl;
+
 
 @Path("/patient")
 public class PatientApi {
@@ -57,7 +59,7 @@ public class PatientApi {
 			@QueryParam("phonenumber") @DefaultValue("") String phonenumber) {
 		String response = null;
         try {
-        	//response = DoctorImpl.getDoctorById(doctorid);
+        	response = PatientImpl.getByPhoneNumber(phonenumber);
         }
         catch (Throwable t) {
             t.printStackTrace();

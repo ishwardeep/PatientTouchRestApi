@@ -11,7 +11,7 @@ public class ReminderCampaignAnalyzer implements Runnable {
 		List<Campaign> campaigns;
 		
 		try {	
-			campaigns = ReminderCampaignImpl.getCampaignInfo(null, query);
+			campaigns = CampaignImpl.getCampaignInfo(null, query);
 			if (campaigns == null) {
 				System.out.println("No reminder campaign running");
 				return;

@@ -24,7 +24,7 @@ public class TestSmsTempateImpl {
 
 		//request.setPracticeName("Fortis");
 		request.setSmsTemplateInfo(null,"default", SmsTemplateType.WAITLIST, 
-				"<First> please confirm your availability for appt at <Time> in <Office>", 
+				"[First] please confirm your availability for appt at <Time> in <Office>", 
 				"Thank you for confirming appointment", 
 				"Please get in touch with office for rescheduling appointment", 
 				UserRole.SUPERUSER);

@@ -29,6 +29,7 @@ public class DbOperations {
 			config.addAnnotatedClass(SmsMessage.class);
 			config.addAnnotatedClass(Waitlist.class);
 			config.addAnnotatedClass(ApplicationProperties.class);
+			config.addAnnotatedClass(UserApiInvocationLog.class);
 			config.configure();
 
 			_factory = config.buildSessionFactory();
@@ -78,6 +79,41 @@ public class DbOperations {
 		return ret;
 	}
 	
+	public static int addToDbWithConditionalTransaction(Session session, Object o) {
+		int ret = ErrorCodes.SUCCESS;
+		boolean startTransaction = false;
+		try {
+			if (session == null) {
+				session = DbOperations.getDbSession();
+				startTransaction = true;
+			}
+			if (startTransaction) {
+				session.getTransaction().begin();
+			}
+			session.save(o);
+			
+			if (startTransaction) {
+				session.getTransaction().commit();
+			}
+		}
+		catch (ConstraintViolationException e) {
+			if (startTransaction && session != null && session.getTransaction().isActive()) {
+				session.getTransaction().rollback();
+			}
+			ret = ErrorCodes.DB_CONSTRAINT_VIOLATED;
+		}
+		catch (Throwable t) {
+			if (startTransaction && session != null && session.getTransaction().isActive()) {
+				session.getTransaction().rollback();
+			}
+			System.out.println("dbLookup Exception [" + t.getMessage() + "]");
+			t.printStackTrace();
+			ret = ErrorCodes.SERVER_ERROR;
+		}
+		
+		return ret;
+	}
+	
 	public static int updateDb(Session session, Object o) {
 		int ret = ErrorCodes.SUCCESS;
 		try {
@@ -95,6 +131,39 @@ public class DbOperations {
 		}
 		catch (Throwable t) {
 			if (session != null && session.getTransaction().isActive()) {
+				session.getTransaction().rollback();
+			}
+			System.out.println("dbLookup Exception [" + t.getMessage() + "]");
+			t.printStackTrace();
+			ret = ErrorCodes.SERVER_ERROR;
+		}
+		
+		return ret;
+	}
+	
+	public static int updateDbWithConditionalTransaction(Session session, Object o) {
+		int ret = ErrorCodes.SUCCESS;
+		boolean startTransaction = false;
+		try {
+			if (session == null) {
+				session.getTransaction().begin();
+				startTransaction = true;
+			}
+			
+			session.update(o);
+			
+			if (startTransaction) {
+				session.getTransaction().commit();
+			}
+		}
+		catch (ConstraintViolationException e) {
+			if (startTransaction && session != null && session.getTransaction().isActive()) {
+				session.getTransaction().rollback();
+			}
+			ret = ErrorCodes.DB_CONSTRAINT_VIOLATED;
+		}
+		catch (Throwable t) {
+			if (startTransaction && session != null && session.getTransaction().isActive()) {
 				session.getTransaction().rollback();
 			}
 			System.out.println("dbLookup Exception [" + t.getMessage() + "]");

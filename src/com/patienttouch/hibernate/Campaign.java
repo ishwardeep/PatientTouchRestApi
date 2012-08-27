@@ -33,6 +33,9 @@ public class Campaign {
 	private CampaignStatus status;
 	private Date lastUpdateTime;
 	private List<AppointmentInfo> appointmentInfo;
+	private String dependentCampaignId;
+	private long appointeeResponseTimeInMs;
+	private long interMessageSpacingInMs;
 	
 	@Id
 	@GeneratedValue
@@ -135,4 +138,24 @@ public class Campaign {
 		this.appointmentInfo = appointmentInfo;
 	}
 	
+	public String getDependentCampaignId() {
+		return dependentCampaignId;
+	}
+	public void setDependentCampaignId(String dependentCampaignId) {
+		this.dependentCampaignId = dependentCampaignId;
+	}
+	
+	public long getAppointeeResponseTimeInMs() {
+		return appointeeResponseTimeInMs;
+	}
+	public void setAppointeeResponseTimeInMs(long appointeeResponseTimeInMs) {
+		this.appointeeResponseTimeInMs = appointeeResponseTimeInMs;
+	}
+	
+	public long getInterMessageSpacingInMs() {
+		return interMessageSpacingInMs;
+	}
+	public void setInterMessageSpacingInMs(long interMessageSpacingInMs) {
+		this.interMessageSpacingInMs = interMessageSpacingInMs;
+	}	
 }

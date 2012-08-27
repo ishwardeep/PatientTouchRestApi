@@ -37,16 +37,20 @@ public class PostNotificationApi {
         	xm = new Xmappr(EventNotifications.class);
 			en = (EventNotifications) xm.fromXML(reader);
 			
-			for (SubscriptionNotification sn : en.subscriptionNotification) {		
-				SmsMsgRouter.getInstance().processPostNotification(sn, null);
-				//PostNotificationTask postTask = new PostNotificationTask(sn, null);
-				//postTask.run();			
+			if (en.subscriptionNotification != null) {
+				for (SubscriptionNotification sn : en.subscriptionNotification) {		
+					//SmsMsgRouter.getInstance().processPostNotification(sn, null);
+					PostNotificationTask postTask = new PostNotificationTask(sn, null);
+					postTask.run();			
+				}
 			}
 			
-			for (CancelSubscriptionNotification csn : en.cancelSubscriptionNotification) {
-				SmsMsgRouter.getInstance().processPostNotification(null, csn);
-				//PostNotificationTask postTask = new PostNotificationTask(null, csn);
-				//postTask.run();
+			if (en.cancelSubscriptionNotification != null) {
+				for (CancelSubscriptionNotification csn : en.cancelSubscriptionNotification) {
+					//SmsMsgRouter.getInstance().processPostNotification(null, csn);
+					PostNotificationTask postTask = new PostNotificationTask(null, csn);
+					postTask.run();
+				}
 			}
         	response = "OK";
         }
